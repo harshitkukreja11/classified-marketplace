@@ -1,45 +1,49 @@
-import { listings } from "@/data/listings";
+import { prisma } from "@/lib/prisma";
+import ImageGallery from "@/components/ImageGallery";
 
-export default async function ListingDetail({ params }) {
+export default async function ListingDetails({ params }) {
 
   const { id } = await params;
 
-  const item = listings.find(
-    (l) => l.id === parseInt(id)
-  );
+  const listing = await prisma.listing.findUnique({
+    where: {
+      id: Number(id)
+    }
+  });
 
-  if (!item) {
-    return <p>Listing not found</p>;
+  if (!listing) {
+    return <div className="p-10 text-center">Listing not found</div>;
   }
 
   return (
-    <div className="max-w-3xl mx-auto">
+    <div className="max-w-5xl mx-auto p-6">
 
-      <img
-        src={item.image}
-        className="w-full h-96 object-cover rounded"
-      />
+      {/* IMAGE GALLERY */}
+      <ImageGallery images={listing.images} />
 
-      <h1 className="text-3xl font-bold mt-6">
-        {item.title}
-      </h1>
+      {/* DETAILS */}
+      <div className="mt-6">
 
-      <p className="text-gray-600 mt-2">
-        Location: {item.location}
-      </p>
+        <h1 className="text-3xl font-bold">
+          {listing.title}
+        </h1>
 
-      <p className="text-blue-600 text-2xl font-bold mt-4">
-        AED {item.price}
-      </p>
+        <p className="text-gray-500 mt-2">
+          {listing.location}
+        </p>
 
-      <div className="mt-6 space-x-4">
-        <button className="bg-green-600 text-white px-4 py-2 rounded">
-          Call Seller
+        <p className="text-blue-600 text-2xl font-bold mt-3">
+          AED {listing.price}
+        </p>
+
+        <p className="mt-4 text-gray-700">
+          {listing.description}
+        </p>
+
+        <button className="mt-6 bg-green-600 text-white px-6 py-3 rounded">
+          Contact Seller
         </button>
 
-        <button className="bg-blue-600 text-white px-4 py-2 rounded">
-          WhatsApp
-        </button>
       </div>
 
     </div>

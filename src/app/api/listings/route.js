@@ -1,7 +1,33 @@
 import { prisma } from "@/lib/prisma";
 
-export async function POST(req) {
+export async function GET() {
+
   try {
+
+    const listings = await prisma.listing.findMany({
+      orderBy: {
+        id: "desc",
+      },
+    });
+
+    return Response.json(listings);
+
+  } catch (error) {
+
+    console.error(error);
+
+    return new Response(
+      JSON.stringify({ error: "Failed to fetch listings" }),
+      { status: 500 }
+    );
+  }
+}
+
+
+export async function POST(req) {
+
+  try {
+
     const data = await req.json();
 
     const listing = await prisma.listing.create({
@@ -16,11 +42,13 @@ export async function POST(req) {
     return Response.json(listing);
 
   } catch (error) {
-    console.error("Create listing error:", error);
+
+    console.error(error);
 
     return new Response(
       JSON.stringify({ error: "Failed to create listing" }),
       { status: 500 }
     );
   }
+
 }
