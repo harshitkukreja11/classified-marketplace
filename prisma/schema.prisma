@@ -1,0 +1,16 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Listing {
+  id          Int      @id @default(autoincrement())
+  title       String
+  price       Float
+  description String
+  images      String[]
+  createdAt   DateTime @default(now())
+}

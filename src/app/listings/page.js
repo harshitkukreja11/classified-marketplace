@@ -1,11 +1,16 @@
-import { prisma } from "@/lib/prisma";
 import ListingCard from "@/components/ListingCard";
+
+async function getListings() {
+  const res = await fetch("http://localhost:3000/api/listings", {
+    cache: "no-store",
+  });
+
+  return res.json();
+}
 
 export default async function Home() {
 
-  const listings = await prisma.listing.findMany({
-    orderBy: { id: "desc" }
-  });
+  const listings = await getListings();
 
   return (
     <div>
@@ -15,9 +20,11 @@ export default async function Home() {
       </h1>
 
       <div className="grid md:grid-cols-3 gap-6">
+
         {listings.map((item) => (
           <ListingCard key={item.id} item={item} />
         ))}
+
       </div>
 
     </div>
