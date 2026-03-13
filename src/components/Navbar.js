@@ -9,7 +9,7 @@ export default function Navbar() {
 
       <div className="space-x-6">
         <Link href="/listings">Browse</Link>
-        <Link href="/post-listing">Post Listing</Link>
+        <Link href="/post-listing">Post Listings</Link>
         <Link href="/dashboard">Dashboard</Link>
       </div>
     </nav>
