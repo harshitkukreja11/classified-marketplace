@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import ListingCard from "@/components/ListingCard";
 
+
+export const dynamic = "force-dynamic";
 export default async function Home() {
 
   const listings = await prisma.listing.findMany({
