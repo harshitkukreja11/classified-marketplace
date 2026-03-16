@@ -4,7 +4,7 @@ import ListingCard from "@/components/ListingCard";
 
 export const dynamic = "force-dynamic";
 export default async function Home() {
-
+console.log("DB:", process.env.DATABASE_URL);
   const listings = await prisma.listing.findMany({
     orderBy: { id: "desc" }
   });
@@ -25,4 +25,3 @@ export default async function Home() {
     </div>
   );
 }
-console.log("DB:", process.env.DATABASE_URL);
