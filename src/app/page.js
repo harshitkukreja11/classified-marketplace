@@ -25,3 +25,4 @@ export default async function Home() {
     </div>
   );
 }
+console.log("DB:", process.env.DATABASE_URL);
