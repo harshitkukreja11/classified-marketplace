@@ -5,7 +5,9 @@ async function getListings() {
     cache: "no-store",
   });
 
-  return res.json();
+  const data = await res.json();
+
+  return Array.isArray(data.data) ? data.data : []; // ✅ safe
 }
 
 export default async function Home() {
@@ -26,6 +28,10 @@ export default async function Home() {
         ))}
 
       </div>
+
+      {listings.length === 0 && (
+        <p className="text-center mt-6">No listings found</p>
+      )}
 
     </div>
   );

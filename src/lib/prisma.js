@@ -4,12 +4,13 @@ import { Pool } from "pg";
 
 const globalForPrisma = globalThis;
 
-function createPrismaClient() {
+let prisma;
+
+if (!globalForPrisma.prisma) {
   const connectionString = process.env.DATABASE_URL;
 
   if (!connectionString) {
-    console.warn("DATABASE_URL is not set");
-    return null;
+    throw new Error("DATABASE_URL is not set");
   }
 
   const pool = new Pool({
@@ -18,14 +19,13 @@ function createPrismaClient() {
 
   const adapter = new PrismaPg(pool);
 
-  return new PrismaClient({
+  prisma = new PrismaClient({
     adapter,
   });
-}
 
-export const prisma =
-  globalForPrisma.prisma ?? createPrismaClient();
-
-if (process.env.NODE_ENV !== "production") {
   globalForPrisma.prisma = prisma;
+} else {
+  prisma = globalForPrisma.prisma;
 }
+
+export { prisma };
