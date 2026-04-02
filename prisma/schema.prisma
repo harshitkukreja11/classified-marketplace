@@ -1,0 +1,105 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int        @id @default(autoincrement())
+  name         String
+  email        String     @unique
+  password     String
+  phone        String?
+  location     String?
+  profileImage String?
+  listings     Listing[]
+  favorites    Favorite[]
+  createdAt    DateTime   @default(now())
+}
+
+model Category {
+  id        Int       @id @default(autoincrement())
+  name      String    @unique
+  slug      String    @unique
+  listings  Listing[]
+  createdAt DateTime  @default(now())
+}
+
+model Listing {
+  id              Int               @id @default(autoincrement())
+  title           String
+  description     String
+  price           Float
+  condition       String
+  businessName    String?
+  sellerEmail     String
+  contactNumber   String
+  whatsappNumber  String?
+  address         String?
+  location        String
+  city            String
+  country         String
+  status          String            @default("AVAILABLE")
+  isActive        Boolean           @default(true)
+  expiryDate      DateTime?
+  views           Int               @default(0)
+  contactClicks   Int               @default(0)
+  phoneClicks     Int               @default(0)
+  whatsappClicks  Int               @default(0)
+  createdAt       DateTime          @default(now())
+
+  userId          Int
+  categoryId      Int
+
+  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category        Category          @relation(fields: [categoryId], references: [id])
+  images          ListingImage[]
+  analytics       ListingAnalytics[]
+  favorites       Favorite[]
+  payments        Payment[]
+}
+
+model ListingImage {
+  id        Int      @id @default(autoincrement())
+  imageUrl  String
+  sortOrder Int      @default(0)
+  listingId Int
+  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+}
+
+model Payment {
+  id          Int      @id @default(autoincrement())
+  amount      Float
+  currency    String   @default("AED")
+  status      String   @default("PENDING")
+  provider    String?
+  listingId   Int
+  createdAt   DateTime @default(now())
+
+  listing     Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+}
+
+model ListingAnalytics {
+  id          Int      @id @default(autoincrement())
+  listingId   Int
+  eventType   String
+  ipAddress   String?
+  createdAt   DateTime @default(now())
+
+  listing     Listing   @relation(fields: [listingId], references: [id], onDelete: Cascade)
+}
+
+model Favorite {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  listingId Int
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, listingId])
+}
