@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar";
+import ImageUploader from "@/components/ImageUploader";
 
 export default function CreateListingPage() {
   const router = useRouter();
@@ -169,41 +170,10 @@ export default function CreateListingPage() {
             onChange={(e) => setForm({ ...form, description: e.target.value })}
           />
 
-          <div className="md:col-span-2">
-            <input
-              className="border p-3 rounded w-full"
-              placeholder="Paste image URL and click Add Image"
-              value={imageInput}
-              onChange={(e) => setImageInput(e.target.value)}
-            />
-
-            <button
-              type="button"
-              className="mt-2 bg-gray-800 text-white px-4 py-2 rounded"
-              onClick={() => {
-                if (!imageInput.trim()) return;
-                setForm({
-                  ...form,
-                  images: [...form.images, imageInput],
-                });
-                setImageInput("");
-              }}
-            >
-              Add Image
-            </button>
-
-            <div className="mt-3 flex flex-wrap gap-2">
-              {form.images.map((img, i) => (
-                <img
-                  key={i}
-                  src={img}
-                  alt={`Preview ${i + 1}`}
-                  className="w-24 h-24 object-cover rounded border"
-                />
-              ))}
-            </div>
-          </div>
-
+         <ImageUploader
+  images={form.images}
+  setImages={(newImages) => setForm({ ...form, images: newImages })}
+/>
           <button className="md:col-span-2 bg-blue-600 text-white py-3 rounded">
             Publish Listing
           </button>

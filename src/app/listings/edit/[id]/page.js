@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Navbar from "@/components/Navbar";
+import ImageUploader from "@/components/ImageUploader";
 
 export default function EditListingPage() {
   const router = useRouter();
@@ -218,54 +219,10 @@ export default function EditListingPage() {
             onChange={(e) => setForm({ ...form, description: e.target.value })}
           />
 
-          <div className="md:col-span-2">
-            <input
-              className="border p-3 rounded w-full"
-              placeholder="Paste image URL and click Add Image"
-              value={imageInput}
-              onChange={(e) => setImageInput(e.target.value)}
-            />
-
-            <button
-              type="button"
-              className="mt-2 bg-gray-800 text-white px-4 py-2 rounded"
-              onClick={() => {
-                if (!imageInput.trim()) return;
-                setForm({
-                  ...form,
-                  images: [...form.images, imageInput],
-                });
-                setImageInput("");
-              }}
-            >
-              Add Image
-            </button>
-
-            <div className="mt-3 flex flex-wrap gap-2">
-              {form.images.map((img, i) => (
-                <div key={i} className="relative">
-                  <img
-                    src={img}
-                    alt={`Preview ${i + 1}`}
-                    className="w-24 h-24 object-cover rounded border"
-                  />
-                  <button
-                    type="button"
-                    className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full w-6 h-6"
-                    onClick={() =>
-                      setForm({
-                        ...form,
-                        images: form.images.filter((_, index) => index !== i),
-                      })
-                    }
-                  >
-                    ×
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-
+         <ImageUploader
+  images={form.images}
+  setImages={(newImages) => setForm({ ...form, images: newImages })}
+/>
           <button className="md:col-span-2 bg-blue-600 text-white py-3 rounded">
             Update Listing
           </button>
