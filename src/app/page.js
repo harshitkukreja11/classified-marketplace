@@ -1,13 +1,20 @@
 import Navbar from "@/components/Navbar";
 import ListingCard from "@/components/ListingCard";
+import { prisma } from "@/lib/prisma";
 
 async function getListings() {
-  const res = await fetch("http://localhost:3000/api/listings", {
-    cache: "no-store",
+  return prisma.listing.findMany({
+    where: { isActive: true },
+    orderBy: { id: "desc" },
+    include: {
+      category: true,
+      user: true,
+      images: {
+        orderBy: { sortOrder: "asc" },
+      },
+    },
+    take: 6,
   });
-
-  if (!res.ok) return [];
-  return res.json();
 }
 
 export default async function HomePage() {

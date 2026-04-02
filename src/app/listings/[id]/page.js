@@ -1,14 +1,20 @@
 import Navbar from "@/components/Navbar";
 import FavoriteButton from "@/components/FavoriteButton";
-
+import { prisma } from "@/lib/prisma";
 
 async function getListing(id) {
-  const res = await fetch(`http://localhost:3000/api/listings/${id}`, {
-    cache: "no-store",
+  return prisma.listing.findUnique({
+    where: {
+      id: Number(id),
+    },
+    include: {
+      user: true,
+      category: true,
+      images: {
+        orderBy: { sortOrder: "asc" },
+      },
+    },
   });
-
-  if (!res.ok) return null;
-  return res.json();
 }
 
 export default async function ListingDetailPage({ params }) {
@@ -59,47 +65,28 @@ export default async function ListingDetailPage({ params }) {
             <p className="text-blue-600 text-2xl font-semibold mt-2">
               AED {listing.price}
             </p>
+
             <div className="mt-4">
-  <FavoriteButton listingId={listing.id} />
-</div>
+              <FavoriteButton listingId={listing.id} />
+            </div>
 
             <p className="mt-4 text-gray-700">{listing.description}</p>
 
             <div className="mt-6 space-y-2">
-              <p>
-                <strong>Condition:</strong> {listing.condition}
-              </p>
-              <p>
-                <strong>Category:</strong> {listing.category?.name}
-              </p>
-              <p>
-                <strong>Location:</strong> {listing.city}, {listing.country}
-              </p>
-              <p>
-                <strong>Status:</strong> {listing.status}
-              </p>
-              <p>
-                <strong>Views:</strong> {listing.views}
-              </p>
+              <p><strong>Condition:</strong> {listing.condition}</p>
+              <p><strong>Category:</strong> {listing.category?.name}</p>
+              <p><strong>Location:</strong> {listing.city}, {listing.country}</p>
+              <p><strong>Status:</strong> {listing.status}</p>
+              <p><strong>Views:</strong> {listing.views}</p>
             </div>
 
             <div className="mt-8 border-t pt-6">
               <h2 className="text-xl font-bold mb-3">Seller Contact</h2>
-              <p>
-                <strong>Email:</strong> {listing.sellerEmail}
-              </p>
-              <p>
-                <strong>Phone:</strong> {listing.contactNumber}
-              </p>
-              <p>
-                <strong>WhatsApp:</strong> {listing.whatsappNumber || "-"}
-              </p>
-              <p>
-                <strong>Business:</strong> {listing.businessName || "-"}
-              </p>
-              <p>
-                <strong>Address:</strong> {listing.address || "-"}
-              </p>
+              <p><strong>Email:</strong> {listing.sellerEmail}</p>
+              <p><strong>Phone:</strong> {listing.contactNumber}</p>
+              <p><strong>WhatsApp:</strong> {listing.whatsappNumber || "-"}</p>
+              <p><strong>Business:</strong> {listing.businessName || "-"}</p>
+              <p><strong>Address:</strong> {listing.address || "-"}</p>
             </div>
           </div>
         </div>

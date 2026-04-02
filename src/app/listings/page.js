@@ -1,45 +1,54 @@
 import Navbar from "@/components/Navbar";
 import ListingCard from "@/components/ListingCard";
 import ListingFilters from "@/components/ListingFilters";
+import { prisma } from "@/lib/prisma";
 
 async function getListings(resolvedSearchParams) {
-  const params = new URLSearchParams();
+  const search = resolvedSearchParams?.search || "";
+  const categoryId = resolvedSearchParams?.categoryId || "";
+  const minPrice = resolvedSearchParams?.minPrice || "";
+  const maxPrice = resolvedSearchParams?.maxPrice || "";
+  const condition = resolvedSearchParams?.condition || "";
 
-  if (resolvedSearchParams?.search) {
-    params.set("search", resolvedSearchParams.search);
-  }
-  if (resolvedSearchParams?.categoryId) {
-    params.set("categoryId", resolvedSearchParams.categoryId);
-  }
-  if (resolvedSearchParams?.minPrice) {
-    params.set("minPrice", resolvedSearchParams.minPrice);
-  }
-  if (resolvedSearchParams?.maxPrice) {
-    params.set("maxPrice", resolvedSearchParams.maxPrice);
-  }
-  if (resolvedSearchParams?.condition) {
-    params.set("condition", resolvedSearchParams.condition);
-  }
+  const where = {
+    isActive: true,
+    ...(search
+      ? {
+          OR: [
+            { title: { contains: search, mode: "insensitive" } },
+            { description: { contains: search, mode: "insensitive" } },
+            { city: { contains: search, mode: "insensitive" } },
+            { country: { contains: search, mode: "insensitive" } },
+          ],
+        }
+      : {}),
+    ...(categoryId ? { categoryId: Number(categoryId) } : {}),
+    ...(condition ? { condition } : {}),
+    ...((minPrice || maxPrice) && {
+      price: {
+        ...(minPrice ? { gte: Number(minPrice) } : {}),
+        ...(maxPrice ? { lte: Number(maxPrice) } : {}),
+      },
+    }),
+  };
 
-  const url = params.toString()
-    ? `http://localhost:3000/api/listings?${params.toString()}`
-    : "http://localhost:3000/api/listings";
-
-  const res = await fetch(url, {
-    cache: "no-store",
+  return prisma.listing.findMany({
+    where,
+    orderBy: { id: "desc" },
+    include: {
+      user: true,
+      category: true,
+      images: {
+        orderBy: { sortOrder: "asc" },
+      },
+    },
   });
-
-  if (!res.ok) return [];
-  return res.json();
 }
 
 async function getCategories() {
-  const res = await fetch("http://localhost:3000/api/categories", {
-    cache: "no-store",
+  return prisma.category.findMany({
+    orderBy: { name: "asc" },
   });
-
-  if (!res.ok) return [];
-  return res.json();
 }
 
 export default async function ListingsPage({ searchParams }) {
