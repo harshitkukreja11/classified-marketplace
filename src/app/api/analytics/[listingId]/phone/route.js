@@ -15,7 +15,10 @@ export async function POST(req, { params }) {
     await prisma.listing.update({
       where: { id },
       data: {
-        views: {
+        phoneClicks: {
+          increment: 1,
+        },
+        contactClicks: {
           increment: 1,
         },
       },
@@ -24,16 +27,16 @@ export async function POST(req, { params }) {
     await prisma.listingAnalytics.create({
       data: {
         listingId: id,
-        eventType: "VIEW",
+        eventType: "PHONE_CLICK",
         ipAddress,
       },
     });
 
     return Response.json({ success: true });
   } catch (error) {
-    console.error("POST /api/analytics/[listingId]/view error:", error);
+    console.error("POST /api/analytics/[listingId]/phone error:", error);
     return Response.json(
-      { error: "Failed to track view" },
+      { error: "Failed to track phone click" },
       { status: 500 }
     );
   }

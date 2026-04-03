@@ -2,6 +2,9 @@ import Navbar from "@/components/Navbar";
 import FavoriteButton from "@/components/FavoriteButton";
 import ListingGallery from "@/components/ListingGallery";
 import { prisma } from "@/lib/prisma";
+import TrackListingView from "@/components/TrackListingView";
+import ContactActions from "@/components/ContactActions";
+
 
 async function getListing(id) {
   return prisma.listing.findUnique({
@@ -26,6 +29,7 @@ export default async function ListingDetailPage({ params }) {
     return (
       <>
         <Navbar />
+        <TrackListingView listingId={listing.id} />
         <div className="max-w-4xl mx-auto px-6 py-10">
           <h1 className="text-2xl font-bold">Listing not found</h1>
         </div>
@@ -71,6 +75,11 @@ export default async function ListingDetailPage({ params }) {
               <p><strong>WhatsApp:</strong> {listing.whatsappNumber || "-"}</p>
               <p><strong>Business:</strong> {listing.businessName || "-"}</p>
               <p><strong>Address:</strong> {listing.address || "-"}</p>
+              <ContactActions
+    listingId={listing.id}
+    phone={listing.contactNumber}
+    whatsapp={listing.whatsappNumber}
+  />
             </div>
           </div>
         </div>

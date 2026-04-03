@@ -122,18 +122,38 @@ export default function DashboardPage() {
                     className="w-28 h-20 object-cover rounded border"
                   />
 
-                  <div>
-                    <h2 className="text-xl font-semibold">{listing.title}</h2>
-                    <p className="text-gray-600">
-                      {listing.city}, {listing.country}
-                    </p>
-                    <p className="text-blue-600 font-bold">
-                      AED {listing.price}
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      {listing.category?.name} • {listing.condition}
-                    </p>
-                  </div>
+                <div>
+  <h2 className="text-xl font-semibold">{listing.title}</h2>
+  <p className="text-gray-600">
+    {listing.city}, {listing.country}
+  </p>
+  <p className="text-blue-600 font-bold">AED {listing.price}</p>
+  <p className="text-sm text-gray-500">
+    {listing.category?.name} • {listing.condition}
+  </p>
+
+  <div className="mt-3 grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
+    <div className="bg-gray-100 px-3 py-2 rounded">
+      <strong>{listing.views}</strong>
+      <div>Views</div>
+    </div>
+
+    <div className="bg-gray-100 px-3 py-2 rounded">
+      <strong>{listing.contactClicks}</strong>
+      <div>Contacts</div>
+    </div>
+
+    <div className="bg-gray-100 px-3 py-2 rounded">
+      <strong>{listing.phoneClicks}</strong>
+      <div>Calls</div>
+    </div>
+
+    <div className="bg-gray-100 px-3 py-2 rounded">
+      <strong>{listing.whatsappClicks}</strong>
+      <div>WhatsApp</div>
+    </div>
+  </div>
+</div>
                 </div>
 
                 <div className="flex gap-2">
