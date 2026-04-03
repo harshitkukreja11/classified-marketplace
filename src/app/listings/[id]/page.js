@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar";
 import FavoriteButton from "@/components/FavoriteButton";
+import ListingGallery from "@/components/ListingGallery";
 import { prisma } from "@/lib/prisma";
 
 async function getListing(id) {
@@ -39,29 +40,12 @@ export default async function ListingDetailPage({ params }) {
       <div className="max-w-6xl mx-auto px-6 py-10">
         <div className="grid md:grid-cols-2 gap-8">
           <div>
-            <img
-              src={
-                listing.images?.[0]?.imageUrl ||
-                "https://via.placeholder.com/600x400"
-              }
-              alt={listing.title}
-              className="w-full h-96 object-cover rounded-xl"
-            />
-
-            <div className="grid grid-cols-3 gap-3 mt-4">
-              {listing.images?.map((img) => (
-                <img
-                  key={img.id}
-                  src={img.imageUrl}
-                  alt={listing.title}
-                  className="w-full h-24 object-cover rounded border"
-                />
-              ))}
-            </div>
+            <ListingGallery images={listing.images} title={listing.title} />
           </div>
 
           <div>
             <h1 className="text-3xl font-bold">{listing.title}</h1>
+
             <p className="text-blue-600 text-2xl font-semibold mt-2">
               AED {listing.price}
             </p>

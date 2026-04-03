@@ -1,6 +1,64 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { DndContext, closestCenter } from "@dnd-kit/core";
+import {
+  SortableContext,
+  rectSortingStrategy,
+  useSortable,
+  arrayMove,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+
+function SortableImageItem({ id, img, index, onRemove }) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+  } = useSortable({ id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className="relative border rounded-lg p-2 bg-white"
+    >
+      <button
+        type="button"
+        className="w-full text-left cursor-grab active:cursor-grabbing"
+        {...attributes}
+        {...listeners}
+      >
+        <img
+          src={img}
+          alt={`Uploaded ${index + 1}`}
+          className="w-full h-24 object-cover rounded"
+        />
+      </button>
+
+      {index === 0 && (
+        <span className="absolute top-1 left-1 bg-blue-600 text-white text-[10px] px-2 py-1 rounded">
+          Cover
+        </span>
+      )}
+
+      <button
+        type="button"
+        onClick={() => onRemove(index)}
+        className="absolute top-1 right-1 bg-red-600 text-white text-xs px-2 rounded"
+      >
+        X
+      </button>
+    </div>
+  );
+}
 
 export default function ImageUploader({ images = [], setImages }) {
   const inputRef = useRef(null);
@@ -68,6 +126,19 @@ export default function ImageUploader({ images = [], setImages }) {
     setImages(images.filter((_, i) => i !== index));
   }
 
+  function handleDragEnd(event) {
+    const { active, over } = event;
+
+    if (!over || active.id === over.id) return;
+
+    const oldIndex = images.findIndex((img) => img === active.id);
+    const newIndex = images.findIndex((img) => img === over.id);
+
+    if (oldIndex === -1 || newIndex === -1) return;
+
+    setImages(arrayMove(images, oldIndex, newIndex));
+  }
+
   return (
     <div className="md:col-span-2">
       <div
@@ -97,24 +168,29 @@ export default function ImageUploader({ images = [], setImages }) {
 
       {uploading && <p className="mt-2">Uploading...</p>}
 
-      <div className="mt-4 grid grid-cols-3 gap-2">
-        {images.map((img, i) => (
-          <div key={i} className="relative">
-            <img
-              src={img}
-              alt={`Uploaded ${i + 1}`}
-              className="w-full h-24 object-cover rounded"
-            />
-            <button
-              type="button"
-              onClick={() => removeImage(i)}
-              className="absolute top-1 right-1 bg-red-600 text-white text-xs px-2 rounded"
-            >
-              X
-            </button>
-          </div>
-        ))}
-      </div>
+      {images.length > 0 && (
+        <>
+          <p className="mt-4 text-sm text-gray-600">
+            Drag images to reorder. First image will be the cover image.
+          </p>
+
+          <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+            <SortableContext items={images} strategy={rectSortingStrategy}>
+              <div className="mt-4 grid grid-cols-2 md:grid-cols-3 gap-2">
+                {images.map((img, i) => (
+                  <SortableImageItem
+                    key={`${img}-${i}`}
+                    id={img}
+                    img={img}
+                    index={i}
+                    onRemove={removeImage}
+                  />
+                ))}
+              </div>
+            </SortableContext>
+          </DndContext>
+        </>
+      )}
     </div>
   );
 }
