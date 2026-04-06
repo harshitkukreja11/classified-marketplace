@@ -36,30 +36,31 @@ export default function CreateListingPage() {
   }, []);
 
   async function submit(e) {
-    e.preventDefault();
+  e.preventDefault();
 
-    const res = await fetch("/api/listings", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(form),
-    });
+  const res = await fetch("/api/payments/stripe/create-session", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      listingData: form,
+    }),
+  });
 
-    let data = {};
-    try {
-      data = await res.json();
-    } catch {
-      data = {};
-    }
-
-    if (res.ok) {
-      router.push(`/listings/${data.id}`);
-    } else {
-      alert(data.error || "Failed to create listing");
-    }
+  let data = {};
+  try {
+    data = await res.json();
+  } catch {
+    data = {};
   }
 
+  if (res.ok && data.url) {
+    window.location.href = data.url;
+  } else {
+    alert(data.error || "Failed to start payment");
+  }
+}
   return (
     <>
       <Navbar />
@@ -175,8 +176,8 @@ export default function CreateListingPage() {
   setImages={(newImages) => setForm({ ...form, images: newImages })}
 />
           <button className="md:col-span-2 bg-blue-600 text-white py-3 rounded">
-            Publish Listing
-          </button>
+  Pay 100 AED & Publish
+</button>
         </form>
       </div>
     </>

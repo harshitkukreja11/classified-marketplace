@@ -76,6 +76,7 @@ model Payment {
   currency    String   @default("AED")
   status      String   @default("PENDING")
   provider    String?
+  stripeSessionId   String? @unique
   listingId   Int
   createdAt   DateTime @default(now())
 
