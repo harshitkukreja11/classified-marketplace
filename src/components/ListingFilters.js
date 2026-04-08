@@ -58,18 +58,18 @@ export default function ListingFilters({ categories = [] }) {
   return (
     <form
       onSubmit={applyFilters}
-      className="bg-white rounded-xl shadow p-4 mb-6 grid md:grid-cols-5 gap-4"
+      className="card-ui p-4 mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4"
     >
       <input
         type="text"
-        placeholder="Search title, city, country..."
-        className="border p-3 rounded"
+        placeholder="Search listings"
+        className="input-ui"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
       />
 
       <select
-        className="border p-3 rounded"
+        className="input-ui"
         value={categoryId}
         onChange={(e) => setCategoryId(e.target.value)}
       >
@@ -84,7 +84,7 @@ export default function ListingFilters({ categories = [] }) {
       <input
         type="number"
         placeholder="Min Price"
-        className="border p-3 rounded"
+        className="input-ui"
         value={minPrice}
         onChange={(e) => setMinPrice(e.target.value)}
       />
@@ -92,13 +92,13 @@ export default function ListingFilters({ categories = [] }) {
       <input
         type="number"
         placeholder="Max Price"
-        className="border p-3 rounded"
+        className="input-ui"
         value={maxPrice}
         onChange={(e) => setMaxPrice(e.target.value)}
       />
 
       <select
-        className="border p-3 rounded"
+        className="input-ui"
         value={condition}
         onChange={(e) => setCondition(e.target.value)}
       >
@@ -107,19 +107,12 @@ export default function ListingFilters({ categories = [] }) {
         <option value="Used">Used</option>
       </select>
 
-      <div className="md:col-span-5 flex gap-3">
-        <button
-          type="submit"
-          className="bg-blue-600 text-white px-5 py-2 rounded"
-        >
+      <div className="sm:col-span-2 lg:col-span-5 flex flex-col sm:flex-row gap-3">
+        <button type="submit" className="btn-primary">
           Apply Filters
         </button>
 
-        <button
-          type="button"
-          onClick={clearFilters}
-          className="border px-5 py-2 rounded"
-        >
+        <button type="button" onClick={clearFilters} className="btn-secondary">
           Clear
         </button>
       </div>

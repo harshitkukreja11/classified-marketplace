@@ -49,7 +49,11 @@ export default function FavoritesPage() {
     return (
       <>
         <Navbar />
-        <div className="max-w-6xl mx-auto px-6 py-10">Loading...</div>
+        <div className="section-wrap">
+          <div className="card-ui p-6 text-center text-gray-500 dark:text-gray-400">
+            Loading favorites...
+          </div>
+        </div>
       </>
     );
   }
@@ -58,48 +62,90 @@ export default function FavoritesPage() {
     <>
       <Navbar />
 
-      <div className="max-w-6xl mx-auto px-6 py-10">
-        <h1 className="text-3xl font-bold mb-6">My Favorites</h1>
+      <div className="section-wrap">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-8">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
+              My Favorites
+            </h1>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+              Save listings you like and view them anytime.
+            </p>
+          </div>
+
+          <div className="text-sm text-gray-500 dark:text-gray-400">
+            {favorites.length} {favorites.length === 1 ? "item" : "items"}
+          </div>
+        </div>
 
         {favorites.length === 0 ? (
-          <div className="bg-white p-6 rounded-xl shadow">
-            No favorite listings yet.
+          <div className="card-ui p-10 text-center">
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30 text-2xl">
+              ❤️
+            </div>
+
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+              No favorite listings yet
+            </h2>
+
+            <p className="mt-2 text-gray-500 dark:text-gray-400">
+              Browse listings and save the ones you like here.
+            </p>
+
+            <Link href="/listings" className="btn-primary inline-block mt-5">
+              Browse Listings
+            </Link>
           </div>
         ) : (
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-6">
             {favorites.map((favorite) => {
               const listing = favorite.listing;
 
               return (
                 <div
                   key={favorite.id}
-                  className="border rounded-xl overflow-hidden shadow bg-white"
+                  className="card-ui overflow-hidden group hover:-translate-y-1 duration-300"
                 >
-                  <img
-                    src={
-                      listing.images?.[0]?.imageUrl ||
-                      "https://via.placeholder.com/400x250"
-                    }
-                    alt={listing.title}
-                    className="w-full h-52 object-cover"
-                  />
+                  {/* Image */}
+                  <div className="relative overflow-hidden">
+                    <img
+                      src={
+                        listing.images?.[0]?.imageUrl ||
+                        "https://via.placeholder.com/400x250"
+                      }
+                      alt={listing.title}
+                      className="w-full h-52 object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
 
+                    <div className="absolute top-3 left-3 rounded-full bg-white/90 dark:bg-gray-900/90 backdrop-blur px-3 py-1 text-sm font-semibold text-blue-600 dark:text-blue-400 shadow">
+                      AED {listing.price}
+                    </div>
+                  </div>
+
+                  {/* Content */}
                   <div className="p-4">
-                    <h3 className="text-xl font-semibold">{listing.title}</h3>
-                    <p className="text-gray-600">
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white line-clamp-1">
+                      {listing.title}
+                    </h3>
+
+                    <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
                       {listing.city}, {listing.country}
                     </p>
-                    <p className="text-blue-600 font-bold mt-2">
-                      AED {listing.price}
-                    </p>
-                    <p className="text-sm mt-2">{listing.category?.name}</p>
-                    <p className="text-sm text-gray-500">
-                      {listing.condition}
-                    </p>
+
+                    <div className="mt-3 flex items-center justify-between">
+                      <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                        {listing.category?.name || "Uncategorized"}
+                      </span>
+
+                      <span className="px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-xs font-medium text-gray-700 dark:text-gray-300">
+                        {listing.condition}
+                      </span>
+                    </div>
 
                     <Link
                       href={`/listings/${listing.id}`}
-                      className="inline-block mt-4 bg-blue-600 text-white px-4 py-2 rounded"
+                      className="mt-4 inline-block w-full text-center rounded-xl bg-blue-600 hover:bg-blue-700 text-white py-2.5 font-medium transition"
                     >
                       View Details
                     </Link>
